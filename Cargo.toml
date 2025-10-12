@@ -5,8 +5,9 @@ edition = "2021"
 publish = false
 
 [features]
-default = ["effects"]
+default = ["effects", "components"]
 effects = ["rxtui/effects"]
+components = ["rxtui/components"]
 
 [workspace]
 resolver = "2"
@@ -29,7 +30,7 @@ serde = { version = "1.0", features = ["derive"] }
 thiserror = "2.0"
 
 [dependencies]
-rxtui = { path = "rxtui", features = ["effects"] }
+rxtui = { path = "rxtui", features = ["effects", "components"] }
 tokio = { version = "1", features = ["rt", "rt-multi-thread", "time", "sync", "macros"] }
 
 # Profile configurations

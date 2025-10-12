@@ -30,7 +30,8 @@ pub use crate::{component, update, view};
 pub use crate::node::{Div, Node, RichText, Text};
 
 // Components
-pub use crate::components::TextInput;
+#[cfg(feature = "components")]
+pub use crate::components::{ShimmerSpeed, ShimmerText, TextInput};
 
 // Style types
 pub use crate::style::*;
