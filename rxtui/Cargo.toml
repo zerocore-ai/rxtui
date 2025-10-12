@@ -16,8 +16,9 @@ name = "rxtui"
 path = "lib/lib.rs"
 
 [features]
-default = ["effects"]
+default = ["effects", "components"]
 effects = ["tokio", "futures"]
+components = ["effects"]
 
 [dependencies]
 rxtui-macros = { version = "0.1.6", path = "../rxtui-macros" }

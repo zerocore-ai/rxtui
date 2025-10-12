@@ -97,6 +97,20 @@ Animated progress bar with visual flair:
 
 <br />
 
+### [shimmer_text.rs](./shimmer_text.rs)
+```bash
+cargo run --example shimmer_text
+```
+
+Animated text highlight inspired by shimmer loading placeholders:
+- Continuous, reactive highlight sweeping across text
+- Demonstrates color blending and per-character styling
+- Ships a reusable `ShimmerText` component that takes the message and speed
+- Uses the async effects system for smooth animation
+- Includes exit shortcuts wired through the context handlers
+
+<br />
+
 ### [scroll.rs](./scroll.rs)
 ```bash
 cargo run --example scroll

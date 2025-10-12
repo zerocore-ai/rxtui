@@ -383,7 +383,12 @@ pub mod macros;
 
 /// Reusable UI components for building forms and interfaces
 /// Provides pre-built components like TextInput, Button, etc.
+#[cfg(feature = "components")]
 pub mod components;
+
+/// Stub components module when the `components` feature is disabled.
+#[cfg(not(feature = "components"))]
+pub mod components {}
 
 /// Async effects system for running background tasks
 #[cfg(feature = "effects")]
@@ -420,7 +425,8 @@ pub use rxtui_macros::effect;
 pub use app::{App, Context};
 pub use bounds::Rect;
 pub use component::{Action, Component, Message, MessageExt, State};
-pub use components::TextInput;
+#[cfg(feature = "components")]
+pub use components::{ShimmerSpeed, ShimmerText, TextInput};
 pub use key::{Key, KeyWithModifiers};
 pub use node::{Div, Node, RichText, Text, TextSpan};
 pub use style::{
