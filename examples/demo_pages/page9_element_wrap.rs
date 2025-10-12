@@ -20,7 +20,7 @@ impl Page9ElementWrapDemo {
     #[view]
     fn view(&self, _ctx: &Context) -> Node {
         node! {
-            div(bg: black, dir: vertical, pad: 2, w_pct: 1.0, h_pct: 1.0) [
+            div(bg: black, dir: vertical, pad: 2, w_frac: 1.0, h_frac: 1.0) [
                 // Title
                 text("Page 9: Element Wrapping Demo", color: cyan, bold, underline),
                 text("Elements wrap to next row when container width is exceeded", color: bright_black),

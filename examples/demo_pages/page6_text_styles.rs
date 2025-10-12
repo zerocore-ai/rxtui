@@ -20,7 +20,7 @@ impl Page6TextStylesDemo {
     #[view]
     fn view(&self, _ctx: &Context) -> Node {
         node! {
-            div(bg: black, dir: vertical, pad: 2, w_pct: 1.0, h: 50) [
+            div(bg: black, dir: vertical, pad: 2, w_frac: 1.0, h: 50) [
                 // Title
                 text("Page 6: Text Styling Demo", color: bright_white, bold),
                 spacer(2),
@@ -28,7 +28,7 @@ impl Page6TextStylesDemo {
                 // Basic text styles
                 text("Basic Text Styles:", color: bright_yellow),
                 spacer(1),
-                div(dir: vertical, w_pct: 0.9, h: 25) [
+                div(dir: vertical, w_frac: 0.9, h: 25) [
                     // Bold text
                     text("This is BOLD text", color: white, bold),
                     spacer(1),

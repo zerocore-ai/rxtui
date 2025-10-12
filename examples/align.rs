@@ -86,8 +86,8 @@ impl DivAlignmentDemo {
         node! {
             div(
                 pad: 2,
-                w_pct: 1.0,
-                h_pct: 1.0,
+                w_frac: 1.0,
+                h_frac: 1.0,
                 align: center,
                 @char_global('1'): ctx.handler("justify_start"),
                 @char_global('2'): ctx.handler("justify_center"),

@@ -5,7 +5,7 @@
   <a href="./#gh-light-mode-only" target="_blank">
     <img width="500" alt="rxtui-light" src="https://github.com/user-attachments/assets/3d1e00f4-39ac-4053-b45b-c4bab7de1361" />
   </a>
-  
+
   <br />
 
 <b>———&nbsp;&nbsp;&nbsp;reactive terminal UI framework for rust&nbsp;&nbsp;&nbsp;———</b>
@@ -88,7 +88,7 @@ impl Counter {
             div(
                 pad: 2,
                 align: center,
-                w_pct: 1.0,
+                w_frac: 1.0,
                 gap: 1,
                 @key(up): ctx.handler("inc"),
                 @key(down): ctx.handler("dec"),

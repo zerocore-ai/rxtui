@@ -34,11 +34,13 @@ pub enum Dimension {
     /// Fixed size in terminal cells
     Fixed(u16),
 
-    /// Percentage of parent's dimension (0.0 to 1.0)
+    /// Percentage of parent's dimension (stored as 0.0 to 1.0)
     ///
     /// For root elements, this is relative to the viewport.
     /// For child elements, this is relative to the parent's
-    /// content box (after padding is applied).
+    /// content box (after padding is applied). Helpers such as
+    /// `w_frac`/`h_frac` accept 0.0–1.0 fractions and clamp values
+    /// into this range internally.
     Percentage(f32),
 
     /// Automatically size based on available space

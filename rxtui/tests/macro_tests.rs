@@ -45,7 +45,7 @@ fn test_div_with_hex_color() {
 #[test]
 fn test_div_with_percentage_dimensions() {
     let node = node! {
-        div(w_pct: 0.5, h_pct: 0.8) []
+        div(w_frac: 0.5, h_frac: 0.8) []
     };
 
     match node {

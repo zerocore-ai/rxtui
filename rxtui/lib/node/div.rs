@@ -185,17 +185,19 @@ impl<T> Div<T> {
         self
     }
 
-    /// Sets the width as percentage (0.0 to 1.0)
-    pub fn width_percent(mut self, percent: f32) -> Self {
+    /// Sets the width as fraction of parent (0.0 to 1.0)
+    pub fn width_fraction(mut self, fraction: f32) -> Self {
+        let normalized = fraction.clamp(0.0, 1.0);
         self.styles.base.get_or_insert(Style::default()).width =
-            Some(Dimension::Percentage(percent));
+            Some(Dimension::Percentage(normalized));
         self
     }
 
-    /// Sets the height as percentage (0.0 to 1.0)
-    pub fn height_percent(mut self, percent: f32) -> Self {
+    /// Sets the height as fraction of parent (0.0 to 1.0)
+    pub fn height_fraction(mut self, fraction: f32) -> Self {
+        let normalized = fraction.clamp(0.0, 1.0);
         self.styles.base.get_or_insert(Style::default()).height =
-            Some(Dimension::Percentage(percent));
+            Some(Dimension::Percentage(normalized));
         self
     }
 

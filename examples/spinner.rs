@@ -56,8 +56,8 @@ impl SpinnerGallery {
 
         node! {
             div(
-                w_pct: 1.0,
-                h_pct: 1.0,
+                w_frac: 1.0,
+                h_frac: 1.0,
                 align: center,
                 justify: center,
                 @key(right): ctx.handler(Msg::NextSpinner),

@@ -97,7 +97,7 @@ impl Demo {
         // Now we can use expressions in the node! macro
         node! {
             div(
-                bg: black, dir: vertical, pad: 1, w_pct: 1.0, h_pct: 1.0,
+                bg: black, dir: vertical, pad: 1, w_frac: 1.0, h_frac: 1.0,
                 @char_global('q'): ctx.handler(DemoMessage::Exit),
                 @key_global(esc): ctx.handler(DemoMessage::Exit),
                 @char('1'): ctx.handler(DemoMessage::SetPage(1)),
@@ -120,7 +120,7 @@ impl Demo {
                 @key(left): ctx.handler(DemoMessage::PrevPage)
             ) [
                 // Header
-                div(bg: bright_black, dir: horizontal, pad: 1, w_pct: 1.0, h: 3) [
+                div(bg: bright_black, dir: horizontal, pad: 1, w_frac: 1.0, h: 3) [
                     text("Radical TUI Demo", color: bright_cyan),
                     div(w: 10) [],
                     text("Use ← → or 1-9 to navigate, 'q' to quit", color: bright_yellow)
@@ -162,7 +162,7 @@ impl TabBar {
     #[view]
     fn view(&self, _ctx: &Context) -> Node {
         node! {
-            div(bg: blue, dir: horizontal, h: 3, w_pct: 1.0) [
+            div(bg: blue, dir: horizontal, h: 3, w_frac: 1.0) [
                 node(Tab::new(1, "[1] Overflow", self.current_page)),
                 node(Tab::new(2, "[2] Direction", self.current_page)),
                 node(Tab::new(3, "[3] Percentages", self.current_page)),

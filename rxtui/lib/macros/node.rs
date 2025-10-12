@@ -74,8 +74,8 @@
 ///         // Dimensions
 ///         w: 50,                  // Fixed width
 ///         h: 20,                  // Fixed height
-///         w_pct: 0.5,            // Width as percentage (50%)
-///         h_pct: 0.8,            // Height as percentage (80%)
+///         w_frac: 0.5,            // Width as fraction (50%)
+///         h_frac: 0.8,            // Height as fraction (80%)
 ///         w_auto,                // Automatic width
 ///         h_content,             // Height based on content
 ///
@@ -338,7 +338,7 @@
 ///         // Include other components
 ///         node(Header::new("My App")),
 ///
-///         container(h_pct: 0.8) [
+///         container(h_frac: 0.8) [
 ///             node(MainContent::new(state.data))
 ///         ],
 ///
@@ -376,8 +376,8 @@
 /// | `pad_v` | `padding` | Vertical padding only |
 /// | `w` | `width` | Fixed width |
 /// | `h` | `height` | Fixed height |
-/// | `w_pct` | `width_percent` | Width as percentage (0.0 to 1.0) |
-/// | `h_pct` | `height_percent` | Height as percentage (0.0 to 1.0) |
+/// | `w_frac` | `width_fraction` | Width as fraction (0.0-1.0) |
+/// | `h_frac` | `height_fraction` | Height as fraction (0.0-1.0) |
 ///
 /// # Event Handler Reference
 ///
@@ -918,13 +918,13 @@ macro_rules! tui_apply_props {
         }
     }};
 
-    // Width percentage
-    ($container:expr, w_pct: $pct:expr, $($rest:tt)*) => {{
-        let c = $container.width_percent($pct);
+    // Width fraction
+    ($container:expr, w_frac: $frac:expr, $($rest:tt)*) => {{
+        let c = $container.width_fraction($frac);
         $crate::tui_apply_props!(c, $($rest)*)
     }};
-    ($container:expr, w_pct: $pct:expr) => {{
-        $container.width_percent($pct)
+    ($container:expr, w_frac: $frac:expr) => {{
+        $container.width_fraction($frac)
     }};
 
     // Width auto
@@ -971,13 +971,13 @@ macro_rules! tui_apply_props {
         }
     }};
 
-    // Height percentage
-    ($container:expr, h_pct: $pct:expr, $($rest:tt)*) => {{
-        let c = $container.height_percent($pct);
+    // Height fraction
+    ($container:expr, h_frac: $frac:expr, $($rest:tt)*) => {{
+        let c = $container.height_fraction($frac);
         $crate::tui_apply_props!(c, $($rest)*)
     }};
-    ($container:expr, h_pct: $pct:expr) => {{
-        $container.height_percent($pct)
+    ($container:expr, h_frac: $frac:expr) => {{
+        $container.height_fraction($frac)
     }};
 
     // Height auto
@@ -1979,13 +1979,13 @@ macro_rules! tui_apply_input_props {
         }
     }};
 
-    // Width percentage
-    ($input:expr, w_pct: $pct:expr, $($rest:tt)*) => {{
-        let i = $input.width_percent($pct);
+    // Width fraction
+    ($input:expr, w_frac: $frac:expr, $($rest:tt)*) => {{
+        let i = $input.width_fraction($frac);
         $crate::tui_apply_input_props!(i, $($rest)*)
     }};
-    ($input:expr, w_pct: $pct:expr) => {{
-        $input.width_percent($pct)
+    ($input:expr, w_frac: $frac:expr) => {{
+        $input.width_fraction($frac)
     }};
 
     // Width auto
@@ -2040,13 +2040,13 @@ macro_rules! tui_apply_input_props {
         }
     }};
 
-    // Height percentage
-    ($input:expr, h_pct: $pct:expr, $($rest:tt)*) => {{
-        let i = $input.height_percent($pct);
+    // Height fraction
+    ($input:expr, h_frac: $frac:expr, $($rest:tt)*) => {{
+        let i = $input.height_fraction($frac);
         $crate::tui_apply_input_props!(i, $($rest)*)
     }};
-    ($input:expr, h_pct: $pct:expr) => {{
-        $input.height_percent($pct)
+    ($input:expr, h_frac: $frac:expr) => {{
+        $input.height_fraction($frac)
     }};
 
     // Height auto

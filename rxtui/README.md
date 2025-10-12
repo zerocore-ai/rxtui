@@ -64,7 +64,7 @@ impl Counter {
             div(
                 pad: 2,
                 align: center,
-                w_pct: 1.0,
+                w_frac: 1.0,
                 gap: 1,
                 @key(up): ctx.handler("inc"),
                 @key(down): ctx.handler("dec"),

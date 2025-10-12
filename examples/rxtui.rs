@@ -16,8 +16,8 @@ impl RxTuiLogo {
     fn view(&self, ctx: &Context) -> Node {
         node! {
             div(
-                w_pct: 1.0,
-                h_pct: 1.0,
+                w_frac: 1.0,
+                h_frac: 1.0,
                 dir: vertical,
                 pad: 2,
                 gap: 1,

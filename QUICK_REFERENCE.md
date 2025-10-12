@@ -112,8 +112,8 @@ div(
     // Sizing
     w: 50,               // fixed width
     h: 20,               // fixed height
-    w_pct: 0.5,          // 50% width
-    h_pct: 0.8,          // 80% height
+    w_frac: 0.5,          // 50% width
+    h_frac: 0.8,          // 80% height
     w_auto,              // auto width
     h_auto,              // auto height
     w_content,           // fit content width
@@ -156,8 +156,8 @@ input(
     // Sizing
     w: 40,
     h: 3,
-    w_pct: 0.5,
-    h_pct: 0.4,
+    w_frac: 0.5,
+    h_frac: 0.4,
     w_auto,
     h_auto,
     w_content,
@@ -426,7 +426,7 @@ div [
 
     // Modal
     if state.show_modal {
-        div(absolute, top: 0, left: 0, w_pct: 1.0, h_pct: 1.0, bg: black, z: 1000) [
+        div(absolute, top: 0, left: 0, w_frac: 1.0, h_frac: 1.0, bg: black, z: 1000) [
             div(w: 40, h: 10, bg: white, border: black, pad: 2) [
                 text("Modal Content", color: black)
             ]
@@ -562,9 +562,9 @@ node(
 ### Responsive Layout
 
 ```rust
-div(w_pct: 1.0, h_pct: 1.0) [  // Full screen
-    div(w_pct: 0.3) [ /* 30% sidebar */ ],
-    div(w_pct: 0.7) [ /* 70% main */ ]
+div(w_frac: 1.0, h_frac: 1.0) [  // Full screen
+    div(w_frac: 0.3) [ /* 30% sidebar */ ],
+    div(w_frac: 0.7) [ /* 70% main */ ]
 ]
 ```
 

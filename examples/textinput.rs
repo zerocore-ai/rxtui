@@ -89,7 +89,7 @@ impl TextInputTest {
             div(
                 bg: black,
                 pad: 2,
-                w_pct: 1.0,
+                w_frac: 1.0,
                 h: 36,
                 dir: vertical,
                 @key(esc): ctx.handler(Msg::Exit)

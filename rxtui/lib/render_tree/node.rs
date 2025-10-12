@@ -510,7 +510,13 @@ impl RenderNode {
                     )
                 } else {
                     // Standard layout calculation (no wrapping)
-                    self.calculate_standard_intrinsic_size(direction, padding, border_size, hint)
+                    self.calculate_standard_intrinsic_size(
+                        direction,
+                        padding,
+                        border_size,
+                        gap,
+                        hint,
+                    )
                 }
             }
         }
@@ -522,12 +528,14 @@ impl RenderNode {
         direction: Direction,
         padding: Spacing,
         border_size: u16,
+        gap: u16,
         hint: Option<(u16, u16)>,
     ) -> (u16, u16) {
         let mut total_width = 0u16;
         let mut total_height = 0u16;
         let mut max_width = 0u16;
         let mut max_height = 0u16;
+        let mut relative_children = 0u16;
 
         // Calculate hint to pass to children based on parent's constraints
         let child_hint = if let Some(style) = &self.style {
@@ -561,6 +569,12 @@ impl RenderNode {
         for child in &self.children {
             let child_ref = child.borrow();
 
+            let participates_in_flow = !child_ref
+                .style
+                .as_ref()
+                .and_then(|s| s.position)
+                .is_some_and(|position| matches!(position, Position::Absolute | Position::Fixed));
+
             // Calculate child's size, considering hints for percentages
             let (child_width, child_height) = {
                 let intrinsic = child_ref.calculate_intrinsic_size_multipass(2, child_hint);
@@ -591,6 +605,10 @@ impl RenderNode {
                 (width, height)
             };
 
+            if participates_in_flow {
+                relative_children = relative_children.saturating_add(1);
+            }
+
             match direction {
                 Direction::Horizontal => {
                     total_width = total_width.saturating_add(child_width);
@@ -603,14 +621,20 @@ impl RenderNode {
             }
         }
 
+        let gap_total = if gap > 0 && relative_children > 1 {
+            gap.saturating_mul(relative_children.saturating_sub(1))
+        } else {
+            0
+        };
+
         let content_width = match direction {
-            Direction::Horizontal => total_width,
+            Direction::Horizontal => total_width.saturating_add(gap_total),
             Direction::Vertical => max_width,
         };
 
         let content_height = match direction {
             Direction::Horizontal => max_height,
-            Direction::Vertical => total_height,
+            Direction::Vertical => total_height.saturating_add(gap_total),
         };
 
         let final_width = content_width

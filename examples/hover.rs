@@ -42,8 +42,8 @@ impl HoverShowcase {
                 pad: 2,
                 gap: 2,
                 bg: (Color::Rgb(12, 13, 24)),
-                w_pct: 1.0,
-                h_pct: 1.0,
+                w_frac: 1.0,
+                h_frac: 1.0,
                 @key_global(esc): ctx.handler("exit"),
             ) [
                 text("Interactive Hover Cards", color: cyan, bold),

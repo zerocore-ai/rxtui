@@ -20,7 +20,7 @@ impl Page10UnicodeDemo {
     #[view]
     fn view(&self, _ctx: &Context) -> Node {
         node! {
-            div(bg: black, dir: vertical, pad: 2, w_pct: 1.0, h_pct: 1.0) [
+            div(bg: black, dir: vertical, pad: 2, w_frac: 1.0, h_frac: 1.0) [
                 // Title
                 text("Page 10: Unicode Text Rendering", color: cyan, bold, underline),
                 text("Support for CJK characters, emojis, and full-width text", color: bright_black),
