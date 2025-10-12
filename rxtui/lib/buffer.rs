@@ -347,6 +347,12 @@ impl DoubleBuffer {
         &mut self.back
     }
 
+    /// Clears both front and back buffers, keeping dimensions intact.
+    pub fn reset(&mut self) {
+        self.front.clear();
+        self.back.clear();
+    }
+
     /// Resizes both buffers to the new dimensions.
     pub fn resize(&mut self, width: u16, height: u16) {
         self.front.resize(width, height);

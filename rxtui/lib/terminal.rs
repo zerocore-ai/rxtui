@@ -9,6 +9,7 @@ use crate::style::Color;
 use crossterm::{
     ExecutableCommand, cursor,
     style::{Attribute, Print, ResetColor, SetAttribute, SetBackgroundColor, SetForegroundColor},
+    terminal,
 };
 use std::io::{self, Write};
 
@@ -166,6 +167,23 @@ impl TerminalRenderer {
         self.stdout.execute(ResetColor)?;
         self.stdout.execute(SetAttribute(Attribute::Reset))?;
         self.stdout.flush()?;
+        Ok(())
+    }
+
+    /// Clears the terminal display and resets renderer state tracking.
+    pub fn clear_screen(&mut self) -> io::Result<()> {
+        self.stdout
+            .execute(terminal::Clear(terminal::ClearType::All))?;
+        self.stdout.execute(cursor::MoveTo(0, 0))?;
+        self.stdout.execute(ResetColor)?;
+        self.stdout.execute(SetAttribute(Attribute::Reset))?;
+        self.stdout.flush()?;
+
+        self.current_pos = None;
+        self.current_fg = None;
+        self.current_bg = None;
+        self.current_style = CellStyle::default();
+
         Ok(())
     }
 
