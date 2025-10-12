@@ -416,6 +416,8 @@ impl App {
                     Event::Resize(width, height) => {
                         self.vdom.layout(width, height);
                         self.double_buffer.resize(width, height);
+                        self.double_buffer.reset();
+                        self.terminal_renderer.clear_screen()?;
                         *self.needs_render.borrow_mut() = true;
                     }
                     _ => {}
