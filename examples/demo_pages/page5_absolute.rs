@@ -47,7 +47,7 @@ impl Page5AbsoluteDemo {
         };
 
         let main_content = node! {
-            div(bg: black, dir: vertical, pad: 1, w_pct: 1.0, h: 60, @char('m'): ctx.handler(AbsoluteDemoMsg::ToggleModal)) [
+            div(bg: black, dir: vertical, pad: 1, w_frac: 1.0, h: 60, @char('m'): ctx.handler(AbsoluteDemoMsg::ToggleModal)) [
                 // Title and instructions
                 text("Page 5: Absolute Positioning & Z-Index Demo", color: bright_white),
                 text(
@@ -57,7 +57,7 @@ impl Page5AbsoluteDemo {
                 spacer(1),
 
                 // Container for absolute positioning demo
-                div(pos: relative, w_pct: 0.95, h: 35, bg: bright_black, border: white) [
+                div(pos: relative, w_frac: 0.95, h: 35, bg: bright_black, border: white) [
                     // Layer 1 (z-index: dynamic based on selection)
                     div(
                         absolute,
@@ -199,7 +199,7 @@ impl Page5AbsoluteDemo {
 
             // Create container with both main content and modal
             node! {
-                div(w_pct: 1.0, h_pct: 1.0) [
+                div(w_frac: 1.0, h_frac: 1.0) [
                     (main_content),
                     (modal)
                 ]

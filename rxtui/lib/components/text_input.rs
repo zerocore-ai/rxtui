@@ -999,10 +999,10 @@ impl TextInput {
         self
     }
 
-    /// Sets the width as a percentage of the parent
-    pub fn width_percent(mut self, percent: f32) -> Self {
+    /// Sets the width as a fraction of the parent (0.0 to 1.0)
+    pub fn width_fraction(mut self, fraction: f32) -> Self {
         let mut style = self.styles.base.clone().unwrap_or_else(Self::default_style);
-        style.width = Some(Dimension::Percentage(percent));
+        style.width = Some(Dimension::Percentage(fraction.clamp(0.0, 1.0)));
         self.styles.base = Some(style);
         self
     }
@@ -1031,10 +1031,10 @@ impl TextInput {
         self
     }
 
-    /// Sets the height as a percentage of the parent
-    pub fn height_percent(mut self, percent: f32) -> Self {
+    /// Sets the height as a fraction of the parent (0.0 to 1.0)
+    pub fn height_fraction(mut self, fraction: f32) -> Self {
         let mut style = self.styles.base.clone().unwrap_or_else(Self::default_style);
-        style.height = Some(Dimension::Percentage(percent));
+        style.height = Some(Dimension::Percentage(fraction.clamp(0.0, 1.0)));
         self.styles.base = Some(style);
         self
     }

@@ -82,8 +82,8 @@ impl ScrollTextExample {
                 dir: vertical,
                 pad: 2,
                 gap: 1,
-                w_pct: 1.0,
-                h_pct: 1.0,
+                w_frac: 1.0,
+                h_frac: 1.0,
                 align: center,
                 @key_global(esc): ctx.handler(ScrollViewMsg::Exit)
             ) [

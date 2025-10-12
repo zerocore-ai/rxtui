@@ -53,8 +53,8 @@ impl Form {
         node! {
             div(
                 pad: 2,
-                w_pct: 1.0,
-                h_pct: 1.0,
+                w_frac: 1.0,
+                h_frac: 1.0,
                 align: center,
                 @key(esc): ctx.handler(Msg::Exit)
             ) [
@@ -109,7 +109,7 @@ impl Form {
                     @key(esc): ctx.handler(Msg::ClearFocus)
                 ) [
                     hstack [
-                        div(w_pct: 0.9, h: 1)[],
+                        div(w_frac: 0.9, h: 1)[],
                         text("Submit", color: black, bold),
                     ]
                 ],

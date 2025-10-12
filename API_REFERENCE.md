@@ -144,11 +144,11 @@ impl Div {
 
     // Sizing
     pub fn width(self, w: u16) -> Self;
-    pub fn width_percent(self, pct: f32) -> Self;
+    pub fn width_fraction(self, frac: f32) -> Self;
     pub fn width_auto(self) -> Self;
     pub fn width_content(self) -> Self;
     pub fn height(self, h: u16) -> Self;
-    pub fn height_percent(self, pct: f32) -> Self;
+    pub fn height_fraction(self, frac: f32) -> Self;
     pub fn height_auto(self) -> Self;
     pub fn height_content(self) -> Self;
 
@@ -415,7 +415,7 @@ impl TextStyle {
 ```rust
 pub enum Dimension {
     Fixed(u16),       // Exact size
-    Percentage(f32),  // 0.0 to 1.0
+    Percentage(f32),  // Normalized (0.0 to 1.0)
     Auto,             // Share remaining
     Content,          // Fit content
 }
@@ -625,11 +625,11 @@ impl TextInput {
 
     // Sizing
     pub fn width(self, w: u16) -> Self;
-    pub fn width_percent(self, pct: f32) -> Self;
+    pub fn width_fraction(self, frac: f32) -> Self;
     pub fn width_auto(self) -> Self;
     pub fn width_content(self) -> Self;
     pub fn height(self, h: u16) -> Self;
-    pub fn height_percent(self, pct: f32) -> Self;
+    pub fn height_fraction(self, frac: f32) -> Self;
     pub fn height_auto(self) -> Self;
     pub fn height_content(self) -> Self;
 
@@ -854,8 +854,8 @@ node! {
 | `pad_v` | - | u16 (vertical) |
 | `w` | `width` | u16 |
 | `h` | `height` | u16 |
-| `w_pct` | - | f32 (0.0-1.0) |
-| `h_pct` | - | f32 (0.0-1.0) |
+| `w_frac` | - | f32 (0.0-1.0) |
+| `h_frac` | - | f32 (0.0-1.0) |
 | `w_auto` | - | flag |
 | `h_auto` | - | flag |
 | `w_content` | - | flag |

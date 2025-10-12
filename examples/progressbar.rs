@@ -57,7 +57,7 @@ impl ProgressBar {
                 pad: 2,
                 align: center,
                 gap: 1,
-                w_pct: 1.0,
+                w_frac: 1.0,
                 @key_global(esc): ctx.handler(Msg::Exit),
                 @char_global('q'): ctx.handler(Msg::Exit)
             ) [

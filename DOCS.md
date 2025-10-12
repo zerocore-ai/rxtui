@@ -140,7 +140,7 @@ impl Stopwatch {
             div(
                 pad: 2,
                 align: center,
-                w_pct: 1.0,
+                w_frac: 1.0,
                 gap: 1,
                 @key(esc): ctx.handler(false),
                 @char_global('q'): ctx.handler(false)
@@ -178,7 +178,7 @@ This example demonstrates:
 - Async effects with the `#[effect]` method for continuous updates
 - Rich text formatting with inline styles and hex colors
 - Global keyboard event handling with `@key` and `@char_global`
-- Layout control with centering and responsive width (`w_pct: 1.0`)
+- Layout control with centering and responsive width (`w_frac: 1.0`)
 
 <div align='center'>• • •</div>
 
@@ -303,8 +303,8 @@ node! {
         // Sizing
         w: 50,             // fixed width
         h: 20,             // fixed height
-        w_pct: 0.5,        // 50% of parent width
-        h_pct: 0.8,        // 80% of parent height
+        w_frac: 0.5,        // 50% of parent width
+        h_frac: 0.8,        // 80% of parent height
         w_auto,            // automatic width
         h_content,         // size to content
 
@@ -676,7 +676,7 @@ RxTUI provides a flexible layout system with multiple sizing modes.
 ```rust
 pub enum Dimension {
     Fixed(u16),       // Exact size in cells
-    Percentage(f32),  // Percentage of parent (0.0 to 1.0)
+    Percentage(f32),  // Percentage of parent (stored 0.0 to 1.0)
     Auto,            // Share remaining space equally
     Content,         // Size based on children
 }
@@ -692,7 +692,7 @@ node! {
     ],
 
     // Percentage-based
-    div(w_pct: 0.5, h_pct: 0.8) [
+    div(w_frac: 0.5, h_frac: 0.8) [
         text("50% width, 80% height")
     ],
 

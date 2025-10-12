@@ -31,7 +31,7 @@ impl Stopwatch {
             div(
                 pad: 2,
                 align: center,
-                w_pct: 1.0,
+                w_frac: 1.0,
                 gap: 1,
                 @key(esc): ctx.handler(false),
                 @char_global('q'): ctx.handler(false)

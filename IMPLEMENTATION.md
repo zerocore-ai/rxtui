@@ -391,7 +391,7 @@ Div::new()
     .padding(Spacing::all(2))
     .direction(Direction::Horizontal)
     .width(20)
-    .height_percent(0.5)
+    .height_fraction(0.5)
     .focusable(true)
     .overflow(Overflow::Scroll)
     .show_scrollbar(true)
@@ -407,7 +407,7 @@ node! {
         pad: 2,
         dir: horizontal,
         w: 20,
-        h_pct: 0.5,
+        h_frac: 0.5,
         focusable,
         overflow: scroll,
         show_scrollbar: true
@@ -477,7 +477,7 @@ Sophisticated layout engine supporting multiple sizing modes:
 ```rust
 pub enum Dimension {
     Fixed(u16),       // Exact size in cells
-    Percentage(f32),  // Percentage of parent (0.0-1.0)
+    Percentage(f32),  // Percentage of parent (stored 0.0-1.0)
     Auto,            // Share remaining space equally
     Content,         // Size based on children
 }

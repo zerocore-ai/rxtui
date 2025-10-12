@@ -136,7 +136,7 @@ impl Dashboard {
             div(
                 pad: 2,
                 align: center,
-                w_pct: 1.0,
+                w_frac: 1.0,
                 @char_global('q'): ctx.handler(DashboardMsg::Exit),
                 @key_global(esc): ctx.handler(DashboardMsg::Exit)
             ) [

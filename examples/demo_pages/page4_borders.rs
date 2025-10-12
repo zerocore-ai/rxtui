@@ -20,21 +20,21 @@ impl Page4BordersDemo {
     #[view]
     fn view(&self, _ctx: &Context) -> Node {
         node! {
-            div(bg: black, dir: vertical, pad: 1, w_pct: 1.0, h: 60) [
+            div(bg: black, dir: vertical, pad: 1, w_frac: 1.0, h: 60) [
                 // Title
                 text("Page 4: Borders Demo", color: bright_white),
                 spacer(1),
 
                 // Border style examples
-                div(dir: vertical, w_pct: 0.9, h: 45) [
+                div(dir: vertical, w_frac: 0.9, h: 45) [
                     // Row 1: Single and Double
-                    hstack(w_pct: 1.0, h: 8) [
-                        div(w_pct: 0.48, h: 8, border: cyan, pad: 1) [
+                    hstack(w_frac: 1.0, h: 8) [
+                        div(w_frac: 0.48, h: 8, border: cyan, pad: 1) [
                             text("Single Border (Default)", color: cyan)
                         ],
-                        div(w_pct: 0.04) [], // Spacer
+                        div(w_frac: 0.04) [], // Spacer
                         div(
-                            w_pct: 0.48,
+                            w_frac: 0.48,
                             h: 8,
                             border_style: double,
                             border_color: green,
@@ -46,9 +46,9 @@ impl Page4BordersDemo {
                     spacer(1),
 
                     // Row 2: Thick and Rounded
-                    hstack(w_pct: 1.0, h: 8) [
+                    hstack(w_frac: 1.0, h: 8) [
                         div(
-                            w_pct: 0.48,
+                            w_frac: 0.48,
                             h: 8,
                             border_style: thick,
                             border_color: red,
@@ -56,9 +56,9 @@ impl Page4BordersDemo {
                         ) [
                             text("Thick Border", color: red)
                         ],
-                        div(w_pct: 0.04) [], // Spacer
+                        div(w_frac: 0.04) [], // Spacer
                         div(
-                            w_pct: 0.48,
+                            w_frac: 0.48,
                             h: 8,
                             border_style: rounded,
                             border_color: magenta,
@@ -70,9 +70,9 @@ impl Page4BordersDemo {
                     spacer(1),
 
                     // Row 3: Dashed and Mixed Example
-                    hstack(w_pct: 1.0, h: 8) [
+                    hstack(w_frac: 1.0, h: 8) [
                         div(
-                            w_pct: 0.48,
+                            w_frac: 0.48,
                             h: 8,
                             border_style: dashed,
                             border_color: yellow,
@@ -80,9 +80,9 @@ impl Page4BordersDemo {
                         ) [
                             text("Dashed Border", color: yellow)
                         ],
-                        div(w_pct: 0.04) [], // Spacer
+                        div(w_frac: 0.04) [], // Spacer
                         div(
-                            w_pct: 0.48,
+                            w_frac: 0.48,
                             h: 8,
                             border_style: double,
                             border_color: bright_blue,
@@ -97,9 +97,9 @@ impl Page4BordersDemo {
                     // Selective border edges
                     text("Selective Border Edges:", color: white),
                     spacer(1),
-                    hstack(w_pct: 1.0, h: 6) [
+                    hstack(w_frac: 1.0, h: 6) [
                         div(
-                            w_pct: 0.23,
+                            w_frac: 0.23,
                             h: 6,
                             border_style: single,
                             border_color: cyan,
@@ -108,9 +108,9 @@ impl Page4BordersDemo {
                         ) [
                             text("Horizontal", color: cyan)
                         ],
-                        div(w_pct: 0.02) [], // Spacer
+                        div(w_frac: 0.02) [], // Spacer
                         div(
-                            w_pct: 0.23,
+                            w_frac: 0.23,
                             h: 6,
                             border_style: single,
                             border_color: green,
@@ -119,9 +119,9 @@ impl Page4BordersDemo {
                         ) [
                             text("Vertical", color: green)
                         ],
-                        div(w_pct: 0.02) [], // Spacer
+                        div(w_frac: 0.02) [], // Spacer
                         div(
-                            w_pct: 0.23,
+                            w_frac: 0.23,
                             h: 6,
                             border_style: rounded,
                             border_color: magenta,
@@ -130,9 +130,9 @@ impl Page4BordersDemo {
                         ) [
                             text("Corners", color: magenta)
                         ],
-                        div(w_pct: 0.02) [], // Spacer
+                        div(w_frac: 0.02) [], // Spacer
                         div(
-                            w_pct: 0.23,
+                            w_frac: 0.23,
                             h: 6,
                             border_style: single,
                             border_color: yellow,
@@ -148,7 +148,7 @@ impl Page4BordersDemo {
                     text("Complex Nested Example with Mixed Styles:", color: white),
                     spacer(1),
                     div(
-                        w_pct: 0.95,
+                        w_frac: 0.95,
                         h: 12,
                         border_style: double,
                         border_color: bright_blue,
@@ -156,8 +156,8 @@ impl Page4BordersDemo {
                         dir: horizontal
                     ) [
                         div(
-                            w_pct: 0.3,
-                            h_pct: 1.0,
+                            w_frac: 0.3,
+                            h_frac: 1.0,
                             border_style: rounded,
                             border_color: bright_green,
                             bg: bright_black,
@@ -168,8 +168,8 @@ impl Page4BordersDemo {
                         ],
                         div(w: 2) [],
                         div(
-                            w_pct: 0.3,
-                            h_pct: 1.0,
+                            w_frac: 0.3,
+                            h_frac: 1.0,
                             border_style: thick,
                             border_color: bright_red,
                             pad: 1
@@ -178,8 +178,8 @@ impl Page4BordersDemo {
                         ],
                         div(w: 2) [],
                         div(
-                            w_pct: 0.3,
-                            h_pct: 1.0,
+                            w_frac: 0.3,
+                            h_frac: 1.0,
                             border_style: dashed,
                             border_color: bright_yellow,
                             bg: bright_black,
@@ -194,12 +194,12 @@ impl Page4BordersDemo {
                     // Example of no content space
                     text("Border & Padding with No Content Space:", color: white),
                     spacer(1),
-                    hstack(w_pct: 1.0, h: 8) [
+                    hstack(w_frac: 1.0, h: 8) [
                         // Example with height=4, border=1x2, padding=1x2, leaving 0 height for content
-                        div(w_pct: 0.3, h: 4, border: red, bg: bright_black, pad: 1) [
+                        div(w_frac: 0.3, h: 4, border: red, bg: bright_black, pad: 1) [
                             text("No space for text!", color: white)
                         ],
-                        div(w_pct: 0.05) [], // Spacer
+                        div(w_frac: 0.05) [], // Spacer
                         // Example with width too small for border+padding
                         div(
                             w: 6,
@@ -212,7 +212,7 @@ impl Page4BordersDemo {
                         ) [
                             text("Squished!", color: yellow)
                         ],
-                        div(w_pct: 0.05) [], // Spacer
+                        div(w_frac: 0.05) [], // Spacer
                         // Extreme case: exactly border+padding size
                         div(
                             w: 4,

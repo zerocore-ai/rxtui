@@ -20,7 +20,7 @@ impl Page2DirectionDemo {
     #[view]
     fn view(&self, _ctx: &Context) -> Node {
         node! {
-            div(bg: black, dir: vertical, pad: 2, w_pct: 1.0, h: 45) [
+            div(bg: black, dir: vertical, pad: 2, w_frac: 1.0, h: 45) [
                 // Title
                 text("Page 2: Direction Examples", color: bright_white),
                 spacer(2),

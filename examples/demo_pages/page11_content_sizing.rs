@@ -20,7 +20,7 @@ impl Page11ContentSizingDemo {
     #[view]
     fn view(&self, _ctx: &Context) -> Node {
         node! {
-            div(bg: black, dir: vertical, pad: 2, w_pct: 1.0, h: 60) [
+            div(bg: black, dir: vertical, pad: 2, w_frac: 1.0, h: 60) [
                 // Title
                 text("Page 11: Content-Based Sizing", color: bright_white, bold),
                 spacer(1),
@@ -78,15 +78,15 @@ impl Page11ContentSizingDemo {
                 div(bg: bright_black, dir: horizontal, pad: 1, w: 80, h: 5) [
                     // Parent has fixed width
                     // Content-based width
-                    div(bg: bright_green, h_pct: 1.0, pad: 1) [
+                    div(bg: bright_green, h_frac: 1.0, pad: 1) [
                         text("Content", color: black)
                     ],
                     // Fixed width
-                    div(bg: bright_blue, w: 15, h_pct: 1.0, pad: 1) [
+                    div(bg: bright_blue, w: 15, h_frac: 1.0, pad: 1) [
                         text("Fixed 15", color: white)
                     ],
                     // Auto width (remaining space)
-                    div(bg: bright_magenta, w_auto, h_pct: 1.0, pad: 1) [
+                    div(bg: bright_magenta, w_auto, h_frac: 1.0, pad: 1) [
                         text("Auto (fills remaining)", color: white)
                     ]
                 ],

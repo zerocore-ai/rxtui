@@ -174,7 +174,7 @@ fn view(&self, ctx: &Context, state: MyState) -> Node {
                 ],
 
                 // Percentage width
-                div(w_pct: 0.5, border: blue) [
+                div(w_frac: 0.5, border: blue) [
                     text("Center (50%)")
                 ],
 
@@ -637,7 +637,7 @@ impl TodoApp {
         node! {
             div(bg: black, pad: 2, @key_global(esc): ctx.handler(TodoMsg::Exit)) [
                 // Header
-                div(bg: blue, pad: 1, w_pct: 1.0) [
+                div(bg: blue, pad: 1, w_frac: 1.0) [
                     text("TODO LIST", color: white, bold)
                 ],
 
@@ -776,7 +776,7 @@ fn view(&self, ctx: &Context, state: AppState) -> Node {
                 div(
                     absolute,
                     top: 0, left: 0,
-                    w_pct: 1.0, h_pct: 1.0,
+                    w_frac: 1.0, h_frac: 1.0,
                     bg: (Color::Black.with_alpha(128)),  // Semi-transparent
                     z: 1000
                 ) [

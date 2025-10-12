@@ -53,8 +53,8 @@
 //! - `pad` → padding
 //! - `w` → width
 //! - `h` → height
-//! - `w_pct` → width percentage
-//! - `h_pct` → height percentage
+//! - `w_frac` → width fraction (0.0–1.0)
+//! - `h_frac` → height fraction (0.0–1.0)
 //!
 //! # Event Handlers
 //!
