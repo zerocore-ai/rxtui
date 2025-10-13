@@ -62,13 +62,22 @@ fn render_node_with_offset(
     let rendered_y_i32 = node.y as i32 - parent_scroll_offset as i32;
     let rendered_x = node.x; // No horizontal scrolling
 
+    // Determine the effective vertical extent for clipping.
+    // Text nodes can have more content than their laid-out height represents,
+    // so we want to keep rendering as long as there are remaining lines.
+    let node_visual_height = match &node.node_type {
+        RenderNodeType::TextWrapped(lines) => node.height.max(lines.len() as u16),
+        RenderNodeType::RichTextWrapped(lines) => node.height.max(lines.len() as u16),
+        _ => node.height,
+    };
+
     // For bounds checking, we need to handle negative positions
     // Elements with negative y are partially or fully above the viewport
     let node_bounds = if rendered_y_i32 < 0 {
         // Node starts above viewport - check if it extends into view
-        if rendered_y_i32 + node.height as i32 > 0 {
+        if rendered_y_i32 + node_visual_height as i32 > 0 {
             // Partially visible - create bounds for the visible portion
-            let visible_height = (rendered_y_i32 + node.height as i32) as u16;
+            let visible_height = (rendered_y_i32 + node_visual_height as i32) as u16;
             Rect::new(rendered_x, 0, node.width, visible_height)
         } else {
             // Completely above viewport
@@ -76,7 +85,12 @@ fn render_node_with_offset(
         }
     } else {
         // Normal case - node starts within or below viewport
-        Rect::new(rendered_x, rendered_y_i32 as u16, node.width, node.height)
+        Rect::new(
+            rendered_x,
+            rendered_y_i32 as u16,
+            node.width,
+            node_visual_height,
+        )
     };
 
     // Calculate rendered_y for actual rendering (clamped to 0 for partially visible elements)
