@@ -266,6 +266,12 @@ impl<T> Div<T> {
         self
     }
 
+    /// Sets the border using an explicit Border configuration.
+    pub fn border_with(mut self, border: Border) -> Self {
+        self.styles.base.get_or_insert(Style::default()).border = Some(border);
+        self
+    }
+
     /// Sets the border color with default Single style
     pub fn border_color(mut self, color: Color) -> Self {
         self.styles.base.get_or_insert(Style::default()).border = Some(Border {
