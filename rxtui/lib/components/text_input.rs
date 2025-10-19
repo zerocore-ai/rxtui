@@ -926,15 +926,14 @@ impl TextInput {
     }
 
     /// Sets the border color (creates a default border if none exists)
-    pub fn border(mut self, color: Color) -> Self {
+    pub fn border(self, color: Color) -> Self {
+        self.border_with(Border::new(color))
+    }
+
+    /// Sets the border using an explicit Border configuration.
+    pub fn border_with(mut self, border: Border) -> Self {
         let mut style = self.styles.base.clone().unwrap_or_else(Self::default_style);
-        if style.border.is_none() {
-            style.border = Some(Border::new(color));
-        }
-        if let Some(ref mut border) = style.border {
-            border.color = color;
-            border.enabled = true;
-        }
+        style.border = Some(border);
         self.styles.base = Some(style);
         self
     }
@@ -1068,28 +1067,24 @@ impl TextInput {
     }
 
     /// Sets the border color when focused
-    pub fn focus_border(mut self, color: Color) -> Self {
-        let mut style = self.styles.focus.clone().unwrap_or_default();
-        if style.border.is_none() {
-            style.border = Some(Border::new(color));
-        }
-        if let Some(ref mut border) = style.border {
-            border.color = color;
-            border.enabled = true;
-        }
-        self.styles.focus = Some(style);
-        self
+    pub fn focus_border(self, color: Color) -> Self {
+        self.focus_border_with(Border::new(color))
     }
 
     /// Sets the border style and color when focused
-    pub fn focus_border_style(mut self, border_style: BorderStyle, color: Color) -> Self {
-        let mut style = self.styles.focus.clone().unwrap_or_default();
-        style.border = Some(Border {
+    pub fn focus_border_style(self, border_style: BorderStyle, color: Color) -> Self {
+        self.focus_border_with(Border {
             enabled: true,
             style: border_style,
             color,
             edges: BorderEdges::ALL,
-        });
+        })
+    }
+
+    /// Sets the focus border using an explicit Border configuration.
+    pub fn focus_border_with(mut self, border: Border) -> Self {
+        let mut style = self.styles.focus.clone().unwrap_or_default();
+        style.border = Some(border);
         self.styles.focus = Some(style);
         self
     }

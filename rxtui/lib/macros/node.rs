@@ -1040,6 +1040,13 @@ macro_rules! tui_apply_props {
     }};
 
     // Legacy border support (maps to border_color)
+    ($container:expr, border: none, $($rest:tt)*) => {{
+        let c = $container.border_with($crate::style::Border::none());
+        $crate::tui_apply_props!(c, $($rest)*)
+    }};
+    ($container:expr, border: none) => {{
+        $container.border_with($crate::style::Border::none())
+    }};
     ($container:expr, border: $color:tt, $($rest:tt)*) => {{
         let c = $container.border_color($crate::color_value!($color));
         $crate::tui_apply_props!(c, $($rest)*)
@@ -2102,6 +2109,13 @@ macro_rules! tui_apply_input_props {
     }};
 
     // Focus border color
+    ($input:expr, focus_border: none, $($rest:tt)*) => {{
+        let i = $input.focus_border_with($crate::style::Border::none());
+        $crate::tui_apply_input_props!(i, $($rest)*)
+    }};
+    ($input:expr, focus_border: none) => {{
+        $input.focus_border_with($crate::style::Border::none())
+    }};
     ($input:expr, focus_border: $color:tt, $($rest:tt)*) => {{
         let i = $input.focus_border($crate::color_value!($color));
         $crate::tui_apply_input_props!(i, $($rest)*)
@@ -2278,6 +2292,13 @@ macro_rules! tui_apply_input_props {
     }};
 
     // Legacy border support (maps to border_color)
+    ($input:expr, border: none, $($rest:tt)*) => {{
+        let i = $input.border_with($crate::style::Border::none());
+        $crate::tui_apply_input_props!(i, $($rest)*)
+    }};
+    ($input:expr, border: none) => {{
+        $input.border_with($crate::style::Border::none())
+    }};
     ($input:expr, border: $color:tt, $($rest:tt)*) => {{
         let i = $input.border($crate::color_value!($color));
         $crate::tui_apply_input_props!(i, $($rest)*)
@@ -2474,6 +2495,13 @@ macro_rules! tui_apply_input_props {
     }};
 
     // Focus border color helpers
+    ($input:expr, focus_border: none, $($rest:tt)*) => {{
+        let i = $input.focus_border_with($crate::style::Border::none());
+        $crate::tui_apply_input_props!(i, $($rest)*)
+    }};
+    ($input:expr, focus_border: none) => {{
+        $input.focus_border_with($crate::style::Border::none())
+    }};
     ($input:expr, focus_border: $color:tt, $($rest:tt)*) => {{
         let i = $input.focus_border($crate::color_value!($color));
         $crate::tui_apply_input_props!(i, $($rest)*)

@@ -881,6 +881,16 @@ impl Border {
         }
     }
 
+    /// Creates a disabled border, useful for explicitly clearing borders in styles.
+    pub fn none() -> Self {
+        Self {
+            enabled: false,
+            style: BorderStyle::Single,
+            color: Color::White,
+            edges: BorderEdges::ALL,
+        }
+    }
+
     /// Creates a new border with the specified style and color, rendering all edges.
     pub fn with_style(style: BorderStyle, color: Color) -> Self {
         Self {

@@ -12,6 +12,8 @@ enum Msg {
     PasswordSubmitted,
     SearchChanged(String),
     SearchSubmitted,
+    BorderlessChanged(String),
+    BorderlessSubmitted,
     ExitFocus(bool),
     ClearFocus,
     Exit,
@@ -25,6 +27,8 @@ struct TextInputTestState {
     password_submit_count: usize,
     search_value: String,
     search_history: Vec<String>,
+    borderless_value: String,
+    borderless_submit_count: usize,
     exit_focused: bool,
 }
 
@@ -61,6 +65,12 @@ impl TextInputTest {
                         state.search_history.remove(0);
                     }
                 }
+            }
+            Msg::BorderlessChanged(value) => {
+                state.borderless_value = value;
+            }
+            Msg::BorderlessSubmitted => {
+                state.borderless_submit_count += 1;
             }
             Msg::ExitFocus(focused) => {
                 state.exit_focused = focused;
@@ -163,6 +173,27 @@ impl TextInputTest {
                         )
                     },
                     color: bright_black
+                ),
+                spacer(1),
+
+                text(
+                    "Borderless input with solid background",
+                    color: bright_black
+                ),
+                input(
+                    placeholder: "Try typing here...",
+                    bg: (Color::Rgb(28, 32, 54)),
+                    border: none,
+                    pad: 0,
+                    h: 1,
+                    w: 40,
+                    focusable,
+                    focus_background: (Color::Rgb(40, 44, 72)),
+                    focus_padding: 0,
+                    focus_border: none,
+                    @change: ctx.handler_with_value(Msg::BorderlessChanged),
+                    @submit: ctx.handler(Msg::BorderlessSubmitted),
+                    @key(esc): ctx.handler(Msg::ClearFocus)
                 ),
                 spacer(2),
 
