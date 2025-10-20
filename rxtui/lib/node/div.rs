@@ -408,6 +408,24 @@ impl<T> Div<T> {
         self
     }
 
+    /// Sets the border color when focused
+    pub fn focus_border(self, color: Color) -> Self {
+        self.focus_border_with(Border::new(color))
+    }
+
+    /// Sets the border style and color when focused
+    pub fn focus_border_style(self, border_style: BorderStyle, color: Color) -> Self {
+        self.focus_border_with(Border::with_style(border_style, color))
+    }
+
+    /// Sets the focus border using an explicit configuration
+    pub fn focus_border_with(mut self, border: Border) -> Self {
+        let mut style = self.styles.focus.clone().unwrap_or_default();
+        style.border = Some(border);
+        self.styles.focus = Some(style);
+        self
+    }
+
     /// Sets the hover style
     pub fn hover_style(mut self, style: Style) -> Self {
         self.styles.hover = Some(style);

@@ -1303,6 +1303,53 @@ macro_rules! tui_apply_props {
         }
     }};
 
+    // Focus border helpers
+    ($container:expr, focus_border: none, $($rest:tt)*) => {{
+        let c = $container.focus_border_with($crate::style::Border::none());
+        $crate::tui_apply_props!(c, $($rest)*)
+    }};
+    ($container:expr, focus_border: none) => {{
+        $container.focus_border_with($crate::style::Border::none())
+    }};
+    ($container:expr, focus_border: $color:tt, $($rest:tt)*) => {{
+        let c = $container.focus_border($crate::color_value!($color));
+        $crate::tui_apply_props!(c, $($rest)*)
+    }};
+    ($container:expr, focus_border: $color:tt) => {{
+        $container.focus_border($crate::color_value!($color))
+    }};
+    ($container:expr, focus_border: ($color:expr), $($rest:tt)*) => {{
+        let c = $container.focus_border($color);
+        $crate::tui_apply_props!(c, $($rest)*)
+    }};
+    ($container:expr, focus_border: ($color:expr)) => {{
+        $container.focus_border($color)
+    }};
+    ($container:expr, focus_border: ($color:expr)!, $($rest:tt)*) => {{
+        let c = if let Some(color_val) = $color {
+            $container.focus_border(color_val)
+        } else {
+            $container
+        };
+        $crate::tui_apply_props!(c, $($rest)*)
+    }};
+    ($container:expr, focus_border: ($color:expr)!) => {{
+        if let Some(color_val) = $color {
+            $container.focus_border(color_val)
+        } else {
+            $container
+        }
+    }};
+
+    // Focus border style helpers
+    ($container:expr, focus_border_style: ($style:expr, $color:expr), $($rest:tt)*) => {{
+        let c = $container.focus_border_style($style, $color);
+        $crate::tui_apply_props!(c, $($rest)*)
+    }};
+    ($container:expr, focus_border_style: ($style:expr, $color:expr)) => {{
+        $container.focus_border_style($style, $color)
+    }};
+
     // Hover style
     ($container:expr, hover_style: ($style:expr), $($rest:tt)*) => {{
         let c = $container.hover_style($style);

@@ -66,6 +66,39 @@ fn test_container_with_auto_dimensions() {
     }
 }
 
+#[test]
+fn test_div_focus_border_none() {
+    let node = node! {
+        div(focusable, focus_border: none) []
+    };
+
+    match node {
+        Node::Div(container) => {
+            let focus_style = container.styles.focus.expect("focus style missing");
+            let border = focus_style.border.expect("focus border missing");
+            assert!(!border.enabled, "focus border should be disabled");
+        }
+        _ => panic!("Expected div node"),
+    }
+}
+
+#[test]
+fn test_div_focus_border_color() {
+    let node = node! {
+        div(focus_border: red) []
+    };
+
+    match node {
+        Node::Div(container) => {
+            let focus_style = container.styles.focus.expect("focus style missing");
+            let border = focus_style.border.expect("focus border missing");
+            assert!(border.enabled, "focus border should be enabled");
+            assert_eq!(border.color, Color::Red);
+        }
+        _ => panic!("Expected div node"),
+    }
+}
+
 //--------------------------------------------------------------------------------------------------
 // Text Tests
 //--------------------------------------------------------------------------------------------------
