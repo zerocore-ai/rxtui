@@ -959,7 +959,27 @@ impl RenderNode {
     /// This method resolves percentage-based dimensions before laying out children.
     pub fn layout_with_parent(&mut self, parent_width: u16, parent_height: u16) {
         // First, calculate intrinsic size if we need it
-        let (intrinsic_width, intrinsic_height) = self.calculate_intrinsic_size();
+        // Resolve the hint based on own style (percentage widths need parent dimensions)
+        let hint_width = if let Some(style) = &self.style {
+            match style.width {
+                Some(Dimension::Fixed(w)) => w,
+                Some(Dimension::Percentage(pct)) => (parent_width as f32 * pct) as u16,
+                _ => parent_width,
+            }
+        } else {
+            parent_width
+        };
+        let hint_height = if let Some(style) = &self.style {
+            match style.height {
+                Some(Dimension::Fixed(h)) => h,
+                Some(Dimension::Percentage(pct)) => (parent_height as f32 * pct) as u16,
+                _ => parent_height,
+            }
+        } else {
+            parent_height
+        };
+        let (intrinsic_width, intrinsic_height) =
+            self.calculate_intrinsic_size_multipass(3, Some((hint_width, hint_height)));
 
         // Resolve percentage and fixed dimensions first (auto handled in layout_children_with_parent)
         if let Some(style) = &self.style {
@@ -1608,7 +1628,29 @@ impl RenderNode {
                 }
                 Some(Dimension::Content) => {
                     // Calculate intrinsic size for content-based dimension
-                    let (intrinsic_w, intrinsic_h) = child_ref.calculate_intrinsic_size();
+                    // Calculate hint based on child's width/height settings
+                    let hint_width = if let Some(style) = &child_ref.style {
+                        match style.width {
+                            Some(Dimension::Fixed(w)) => w,
+                            Some(Dimension::Percentage(pct)) => (content_width as f32 * pct) as u16,
+                            _ => content_width,
+                        }
+                    } else {
+                        content_width
+                    };
+                    let hint_height = if let Some(style) = &child_ref.style {
+                        match style.height {
+                            Some(Dimension::Fixed(h)) => h,
+                            Some(Dimension::Percentage(pct)) => {
+                                (content_height as f32 * pct) as u16
+                            }
+                            _ => content_height,
+                        }
+                    } else {
+                        content_height
+                    };
+                    let (intrinsic_w, intrinsic_h) = child_ref
+                        .calculate_intrinsic_size_multipass(3, Some((hint_width, hint_height)));
                     let size = match direction {
                         Direction::Horizontal => intrinsic_w,
                         Direction::Vertical => intrinsic_h,
@@ -1683,7 +1725,29 @@ impl RenderNode {
                 }
                 None => {
                     // If no dimension specified, use content-based sizing
-                    let (intrinsic_w, intrinsic_h) = child_ref.calculate_intrinsic_size();
+                    // Calculate hint based on child's width/height settings
+                    let hint_width = if let Some(style) = &child_ref.style {
+                        match style.width {
+                            Some(Dimension::Fixed(w)) => w,
+                            Some(Dimension::Percentage(pct)) => (content_width as f32 * pct) as u16,
+                            _ => content_width,
+                        }
+                    } else {
+                        content_width
+                    };
+                    let hint_height = if let Some(style) = &child_ref.style {
+                        match style.height {
+                            Some(Dimension::Fixed(h)) => h,
+                            Some(Dimension::Percentage(pct)) => {
+                                (content_height as f32 * pct) as u16
+                            }
+                            _ => content_height,
+                        }
+                    } else {
+                        content_height
+                    };
+                    let (intrinsic_w, intrinsic_h) = child_ref
+                        .calculate_intrinsic_size_multipass(3, Some((hint_width, hint_height)));
                     let size = match direction {
                         Direction::Horizontal => intrinsic_w,
                         Direction::Vertical => intrinsic_h,

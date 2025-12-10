@@ -316,9 +316,8 @@ impl VDom {
                 new_style,
             } => {
                 let mut node_ref = node.borrow_mut();
-                // Update dimensions when text changes
+                // Update width - height will be calculated during layout based on text wrapping
                 node_ref.width = display_width(&new_text) as u16;
-                node_ref.height = 1;
                 node_ref.node_type = RenderNodeType::Text(new_text);
 
                 // Update text style
@@ -346,12 +345,11 @@ impl VDom {
                 new_style,
             } => {
                 let mut node_ref = node.borrow_mut();
-                // Update dimensions when spans change
+                // Update width - height will be calculated during layout based on text wrapping
                 node_ref.width = new_spans
                     .iter()
                     .map(|span| display_width(&span.content) as u16)
                     .sum();
-                node_ref.height = 1;
                 node_ref.node_type = RenderNodeType::RichText(new_spans);
                 // Update the text style (which includes alignment)
                 node_ref.text_style = new_style;
