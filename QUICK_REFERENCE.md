@@ -617,6 +617,31 @@ Action::exit()              // Exit app
 
 ## App Configuration
 
+### Terminal Modes
+
+```rust
+// Alternate screen mode (default) - full-screen, content disappears on exit
+App::new()?.run(MyComponent)?;
+
+// Inline mode - renders in terminal, content persists after exit
+App::inline()?.run(MyComponent)?;
+
+// Custom inline configuration
+use rxtui::{InlineConfig, InlineHeight};
+
+let config = InlineConfig {
+    height: InlineHeight::Fixed(10),      // Fixed 10 lines
+    // height: InlineHeight::Content { max: Some(24) },  // Grow to fit, max 24
+    // height: InlineHeight::Fill { min: 5 },            // Fill remaining space
+    cursor_visible: false,
+    preserve_on_exit: true,               // Keep output after exit
+    mouse_capture: false,                 // Allow terminal scrolling
+};
+App::inline_with_config(config)?.run(MyComponent)?;
+```
+
+### Render Config
+
 ```rust
 let mut app = App::new()?
     .render_config(RenderConfig {
@@ -669,3 +694,4 @@ Includes:
 - Macros: `node!`, `#[component]`, `#[update]`, `#[view]`, `#[effect]`
 - Components: `TextInput`
 - Keys: `Key`, `KeyWithModifiers`
+- Terminal Modes: `TerminalMode`, `InlineConfig`, `InlineHeight`

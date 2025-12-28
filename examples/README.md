@@ -167,6 +167,21 @@ Simple loading animation demonstration:
 
 <br />
 
+### [inline.rs](./inline.rs)
+```bash
+cargo run --example inline
+```
+
+Demonstrates inline rendering mode:
+- Renders directly in terminal without alternate screen
+- Content persists in terminal history after app exits
+- Multiple interactive widgets (counter, status, scrollable log)
+- Tab-based focus navigation between components
+- Ideal for CLI tools that want persistent inline output
+- Shows `App::inline()` usage with content-based height
+
+<br />
+
 ## Feature Showcase
 
 ### [demo.rs](./demo.rs)

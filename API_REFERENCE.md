@@ -538,9 +538,83 @@ pub struct App {
 }
 
 impl App {
+    /// Creates app with alternate screen mode (default).
     pub fn new() -> Result<Self>;
-    pub fn with_config(config: RenderConfig) -> Result<Self>;
+
+    /// Creates app with inline rendering mode.
+    /// Content renders directly in terminal and persists after exit.
+    pub fn inline() -> Result<Self>;
+
+    /// Creates app with custom inline configuration.
+    pub fn inline_with_config(config: InlineConfig) -> Result<Self>;
+
+    /// Creates app with specified terminal mode.
+    pub fn with_mode(mode: TerminalMode) -> Result<Self>;
+
+    /// Runs the application with the given root component.
     pub fn run<C: Component>(&mut self, root: C) -> Result<()>;
+}
+```
+
+### TerminalMode
+
+```rust
+/// Terminal rendering mode.
+pub enum TerminalMode {
+    /// Full-screen alternate buffer (default behavior).
+    /// Content disappears when app exits.
+    AlternateScreen,
+
+    /// Inline rendering in main terminal buffer.
+    /// Content persists in terminal history after app exits.
+    Inline(InlineConfig),
+}
+```
+
+### InlineConfig
+
+```rust
+/// Configuration for inline rendering mode.
+pub struct InlineConfig {
+    /// How to determine rendering height.
+    pub height: InlineHeight,
+
+    /// Whether to show cursor during rendering.
+    pub cursor_visible: bool,
+
+    /// Whether to preserve output after app exits.
+    pub preserve_on_exit: bool,
+
+    /// Whether to capture mouse events.
+    /// Default is false to allow natural terminal scrolling.
+    pub mouse_capture: bool,
+}
+
+impl Default for InlineConfig {
+    fn default() -> Self {
+        Self {
+            height: InlineHeight::Content { max: None },
+            cursor_visible: false,
+            preserve_on_exit: true,
+            mouse_capture: false,
+        }
+    }
+}
+```
+
+### InlineHeight
+
+```rust
+/// Height determination strategy for inline mode.
+pub enum InlineHeight {
+    /// Fixed number of lines.
+    Fixed(u16),
+
+    /// Grow to fit content, with optional maximum.
+    Content { max: Option<u16> },
+
+    /// Fill remaining terminal space below cursor.
+    Fill { min: u16 },
 }
 ```
 

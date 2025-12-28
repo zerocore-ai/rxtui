@@ -202,6 +202,19 @@ impl RenderTree {
     /// Respects the root node's specified dimensions if set, otherwise
     /// uses the viewport size. Clamps dimensions to viewport bounds.
     pub fn layout(&mut self, viewport_width: u16, viewport_height: u16) {
+        self.layout_with_options(viewport_width, viewport_height, false);
+    }
+
+    /// Performs layout with additional options for inline rendering mode.
+    ///
+    /// When `unclamped_height` is true, height is not clamped to the viewport.
+    /// This is used for inline mode where content can grow beyond viewport bounds.
+    pub fn layout_with_options(
+        &mut self,
+        viewport_width: u16,
+        viewport_height: u16,
+        unclamped_height: bool,
+    ) {
         if let Some(root) = &self.root {
             let mut root_ref = root.borrow_mut();
             root_ref.set_position(0, 0);
@@ -215,7 +228,7 @@ impl RenderTree {
                 let width_dim = style.width;
                 let height_dim = style.height;
 
-                // Resolve width
+                // Resolve width (always clamped to viewport)
                 match width_dim {
                     Some(Dimension::Fixed(w)) => {
                         root_ref.width = w.min(viewport_width);
@@ -238,18 +251,30 @@ impl RenderTree {
                     }
                 }
 
-                // Resolve height
+                // Resolve height (optionally unclamped for inline mode)
                 match height_dim {
                     Some(Dimension::Fixed(h)) => {
-                        root_ref.height = h.min(viewport_height);
+                        root_ref.height = if unclamped_height {
+                            h
+                        } else {
+                            h.min(viewport_height)
+                        };
                     }
                     Some(Dimension::Percentage(pct)) => {
                         let calculated_height = (viewport_height as f32 * pct) as u16;
-                        root_ref.height = calculated_height.max(1).min(viewport_height);
+                        root_ref.height = if unclamped_height {
+                            calculated_height.max(1)
+                        } else {
+                            calculated_height.max(1).min(viewport_height)
+                        };
                     }
                     Some(Dimension::Content) => {
-                        // Use intrinsic height, capped at viewport
-                        root_ref.height = intrinsic_height.min(viewport_height);
+                        // Use intrinsic height, optionally capped at viewport
+                        root_ref.height = if unclamped_height {
+                            intrinsic_height
+                        } else {
+                            intrinsic_height.min(viewport_height)
+                        };
                     }
                     Some(Dimension::Auto) => {
                         // For root element, auto means full viewport height
@@ -257,13 +282,21 @@ impl RenderTree {
                     }
                     None => {
                         // No dimension specified - use intrinsic size
-                        root_ref.height = intrinsic_height.min(viewport_height);
+                        root_ref.height = if unclamped_height {
+                            intrinsic_height
+                        } else {
+                            intrinsic_height.min(viewport_height)
+                        };
                     }
                 }
             } else {
-                // No style - use intrinsic dimensions capped at viewport
+                // No style - use intrinsic dimensions, optionally capped at viewport
                 root_ref.width = intrinsic_width.min(viewport_width);
-                root_ref.height = intrinsic_height.min(viewport_height);
+                root_ref.height = if unclamped_height {
+                    intrinsic_height
+                } else {
+                    intrinsic_height.min(viewport_height)
+                };
             }
 
             // Layout children with root's resolved dimensions

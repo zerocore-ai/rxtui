@@ -42,6 +42,7 @@ We bring the retained-mode, component-based architecture that revolutionized web
 - [x] **True Composability** - Build complex apps from simple, reusable components
 - [x] **Best of Both Worlds** - Elm's message architecture meets React's components
 - [x] **TUI Optimizations** - Automatic diffing, dirty tracking, and minimal redraws
+- [x] **Inline Mode** - Render directly in terminal with persistent output for CLI tools
 
 <br />
 
