@@ -422,7 +422,7 @@ pub use rxtui_macros::{component, update, view};
 #[cfg(feature = "effects")]
 pub use rxtui_macros::effect;
 
-pub use app::{App, Context};
+pub use app::{App, Context, InlineConfig, InlineHeight, TerminalMode};
 pub use bounds::Rect;
 pub use component::{Action, Component, Message, MessageExt, State};
 #[cfg(feature = "components")]

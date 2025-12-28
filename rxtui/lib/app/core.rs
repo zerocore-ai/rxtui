@@ -19,9 +19,10 @@ use std::io;
 use std::rc::Rc;
 use std::sync::Arc;
 
-use super::config::RenderConfig;
+use super::config::{InlineConfig, InlineHeight, RenderConfig, TerminalMode};
 use super::context::{FocusRequest, FocusTarget};
 use super::events::{handle_key_event, handle_mouse_event};
+use super::inline::InlineState;
 use super::renderer::render_node_to_buffer;
 use std::collections::HashMap;
 #[cfg(feature = "effects")]
@@ -106,6 +107,12 @@ pub struct App {
     /// Rendering configuration for debugging and optimization control
     config: RenderConfig,
 
+    /// Terminal rendering mode (alternate screen or inline)
+    terminal_mode: TerminalMode,
+
+    /// State for inline rendering mode
+    inline_state: InlineState,
+
     /// Effect runtime for managing async tasks
     #[cfg(feature = "effects")]
     effect_runtime: Option<EffectRuntime>,
@@ -116,7 +123,7 @@ pub struct App {
 //--------------------------------------------------------------------------------------------------
 
 impl App {
-    /// Creates a new terminal UI application.
+    /// Creates a new terminal UI application using alternate screen mode (default).
     ///
     /// Initializes the terminal by:
     /// - Enabling raw mode for character-by-character input
@@ -126,21 +133,68 @@ impl App {
     ///
     /// The terminal state is automatically restored when the app is dropped.
     pub fn new() -> io::Result<Self> {
-        terminal::enable_raw_mode()?;
+        Self::with_mode(TerminalMode::AlternateScreen)
+    }
+
+    /// Creates a new terminal UI application with inline rendering mode.
+    ///
+    /// In inline mode:
+    /// - Content renders directly in the terminal (no alternate screen)
+    /// - Content persists in terminal history after app exits
+    /// - Height is content-based by default (grows to fit, max 24 lines)
+    ///
+    /// The terminal state is automatically restored when the app is dropped.
+    pub fn inline() -> io::Result<Self> {
+        Self::with_mode(TerminalMode::Inline(InlineConfig::default()))
+    }
+
+    /// Creates a new terminal UI application with custom inline configuration.
+    ///
+    /// Use this for fine-grained control over inline rendering behavior.
+    ///
+    /// # Example
+    /// ```rust,ignore
+    /// use rxtui::{App, InlineConfig, InlineHeight};
+    ///
+    /// let config = InlineConfig {
+    ///     height: InlineHeight::Fixed(10),
+    ///     cursor_visible: true,
+    ///     preserve_on_exit: true,
+    /// };
+    /// let app = App::inline_with_config(config)?;
+    /// ```
+    pub fn inline_with_config(config: InlineConfig) -> io::Result<Self> {
+        Self::with_mode(TerminalMode::Inline(config))
+    }
+
+    /// Creates a new terminal UI application with the specified terminal mode.
+    ///
+    /// This is the core constructor that handles both alternate screen and inline modes.
+    pub fn with_mode(mode: TerminalMode) -> io::Result<Self> {
         let mut stdout = io::stdout();
 
-        // Try to enable keyboard enhancement for better modifier support
-        // This may not work on all terminals, so we ignore errors
-        // Note: We're temporarily disabling this as it causes issues with terminal cleanup
-        // use crossterm::event::{KeyboardEnhancementFlags, PushKeyboardEnhancementFlags};
-        // let _ = stdout.execute(PushKeyboardEnhancementFlags(
-        //     KeyboardEnhancementFlags::DISAMBIGUATE_ESCAPE_CODES
-        //         | KeyboardEnhancementFlags::REPORT_ALL_KEYS_AS_ESCAPE_CODES,
-        // ));
+        // Always enable raw mode for event handling
+        terminal::enable_raw_mode()?;
 
-        stdout.execute(terminal::EnterAlternateScreen)?;
-        stdout.execute(cursor::Hide)?;
-        stdout.execute(event::EnableMouseCapture)?;
+        // Mode-specific terminal setup
+        match &mode {
+            TerminalMode::AlternateScreen => {
+                stdout.execute(terminal::EnterAlternateScreen)?;
+                stdout.execute(cursor::Hide)?;
+                stdout.execute(event::EnableMouseCapture)?;
+            }
+            TerminalMode::Inline(config) => {
+                if !config.cursor_visible {
+                    stdout.execute(cursor::Hide)?;
+                }
+                // Only enable mouse capture if explicitly requested
+                // Default is false to allow natural terminal scrolling
+                if config.mouse_capture {
+                    stdout.execute(event::EnableMouseCapture)?;
+                }
+                // Space reservation happens on first render
+            }
+        }
 
         let running = Rc::new(RefCell::new(true));
         let needs_render = Rc::new(RefCell::new(true));
@@ -160,6 +214,8 @@ impl App {
             render_log_fn: None,
             terminal_renderer: TerminalRenderer::new(),
             config: RenderConfig::default(),
+            terminal_mode: mode,
+            inline_state: InlineState::new(),
             #[cfg(feature = "effects")]
             effect_runtime,
         })
@@ -414,10 +470,21 @@ impl App {
                         needs_render = true;
                     }
                     Event::Resize(width, height) => {
-                        self.vdom.layout(width, height);
-                        self.double_buffer.resize(width, height);
-                        self.double_buffer.reset();
-                        self.terminal_renderer.clear_screen()?;
+                        match &self.terminal_mode {
+                            TerminalMode::AlternateScreen => {
+                                // Full re-layout and screen clear for alternate screen
+                                self.vdom.layout(width, height);
+                                self.double_buffer.resize(width, height);
+                                self.double_buffer.reset();
+                                self.terminal_renderer.clear_screen()?;
+                            }
+                            TerminalMode::Inline(_) => {
+                                // For inline mode, just update terminal size tracking
+                                // Height is managed by space reservation, width changes trigger re-render
+                                self.inline_state.terminal_size = (width, height);
+                                // Don't clear screen - we're rendering in reserved space
+                            }
+                        }
                         *self.needs_render.borrow_mut() = true;
                     }
                     _ => {}
@@ -604,20 +671,110 @@ impl App {
         }
     }
 
-    /// Renders the current UI tree to the terminal using double buffering.
+    /// Renders the current UI tree to the terminal.
     ///
-    /// This completely eliminates flicker by:
-    /// 1. Rendering to a memory buffer
-    /// 2. Diffing against the previous frame
-    /// 3. Only updating cells that changed
+    /// Dispatches to the appropriate rendering method based on terminal mode:
+    /// - AlternateScreen: Uses double buffering for flicker-free full-screen rendering
+    /// - Inline: Renders to a reserved region in the main terminal buffer
     fn draw(&mut self) -> io::Result<()> {
-        if self.config.double_buffering {
-            // Use double buffering for flicker-free rendering
-            self.draw_with_double_buffer()
-        } else {
-            // Direct rendering for debugging
-            self.draw_direct()
+        match &self.terminal_mode {
+            TerminalMode::AlternateScreen => {
+                if self.config.double_buffering {
+                    self.draw_with_double_buffer()
+                } else {
+                    self.draw_direct()
+                }
+            }
+            TerminalMode::Inline(config) => {
+                // Clone config to avoid borrow issues
+                let config = config.clone();
+                self.draw_inline(&config)
+            }
         }
+    }
+
+    /// Draws in inline mode with space reservation.
+    fn draw_inline(&mut self, config: &InlineConfig) -> io::Result<()> {
+        use std::io::Write;
+        let mut stdout = io::stdout();
+
+        // Get terminal dimensions
+        let (term_width, term_height) = terminal::size()?;
+
+        // Determine if we should use unclamped height
+        let unclamped = matches!(config.height, InlineHeight::Content { .. });
+
+        // For layout, always use full terminal height to ensure proper child layout.
+        // The render_height (below) will handle the actual clipping.
+        // For Fixed mode, use the fixed height for layout too.
+        let layout_height = match &config.height {
+            InlineHeight::Fixed(h) => *h,
+            InlineHeight::Content { .. } | InlineHeight::Fill { .. } => term_height,
+        };
+
+        // Layout with full dimensions - unclamped allows root to grow beyond viewport
+        self.vdom
+            .layout_with_options(term_width, layout_height, unclamped);
+
+        // Get actual content height from rendered tree
+        let content_height = self
+            .vdom
+            .get_render_tree()
+            .root
+            .as_ref()
+            .map(|r| r.borrow().height)
+            .unwrap_or(1);
+
+        // Apply height limits from config
+        let render_height = match &config.height {
+            InlineHeight::Fixed(h) => *h,
+            InlineHeight::Content { max } => {
+                max.map(|m| content_height.min(m)).unwrap_or(content_height)
+            }
+            InlineHeight::Fill { min } => content_height.max(*min),
+        };
+
+        // Ensure we have at least 1 line
+        let render_height = render_height.max(1);
+
+        // Initialize or expand space reservation
+        if !self.inline_state.initialized {
+            self.inline_state
+                .reserve_space(&mut stdout, render_height)?;
+        } else if render_height > self.inline_state.reserved_height {
+            self.inline_state.expand_space(&mut stdout, render_height)?;
+        }
+
+        // Resize double buffer to match render dimensions
+        if self.double_buffer.back_buffer_mut().dimensions() != (term_width, render_height) {
+            self.double_buffer.resize(term_width, render_height);
+            self.double_buffer.reset();
+        }
+
+        // Clear the back buffer
+        self.double_buffer.clear_back();
+
+        // Render the tree to the back buffer
+        if let Some(root) = &self.vdom.get_render_tree().root {
+            let root_ref = root.borrow();
+            let buffer = self.double_buffer.back_buffer_mut();
+            let clip_rect = Rect::new(0, 0, term_width, render_height);
+            render_node_to_buffer(&root_ref, buffer, &clip_rect, None);
+        }
+
+        // Diff and apply updates with origin offset
+        let updates = self.double_buffer.diff();
+        self.terminal_renderer
+            .apply_updates_inline(updates, self.inline_state.origin_row)?;
+
+        // Swap buffers
+        self.double_buffer.swap();
+
+        // Clear dirty flags
+        self.vdom.get_render_tree().clear_all_dirty();
+
+        stdout.flush()?;
+        Ok(())
     }
 
     /// Draws using double buffering and cell diffing for optimal performance.
@@ -724,23 +881,46 @@ impl App {
 /// Automatically:
 /// - Disables mouse capture
 /// - Shows the cursor
-/// - Returns to main screen buffer
+/// - Returns to main screen buffer (alternate screen mode only)
+/// - Moves cursor below content (inline mode with preserve_on_exit)
 /// - Disables raw mode
 impl Drop for App {
     fn drop(&mut self) {
-        // Note: PopKeyboardEnhancementFlags is commented out since we're not pushing them
-        // use crossterm::event::PopKeyboardEnhancementFlags;
         use std::io::Write;
 
         let mut stdout = io::stdout();
 
-        // Pop keyboard enhancement flags if they were enabled
-        // let _ = stdout.execute(PopKeyboardEnhancementFlags);
-
-        // Restore terminal state
-        let _ = stdout.execute(event::DisableMouseCapture);
+        // Show cursor for both modes
         let _ = stdout.execute(cursor::Show);
-        let _ = stdout.execute(terminal::LeaveAlternateScreen);
+
+        // Mode-specific cleanup
+        match &self.terminal_mode {
+            TerminalMode::AlternateScreen => {
+                let _ = stdout.execute(event::DisableMouseCapture);
+                let _ = stdout.execute(terminal::LeaveAlternateScreen);
+            }
+            TerminalMode::Inline(config) => {
+                // Disable mouse capture if it was enabled
+                if config.mouse_capture {
+                    let _ = stdout.execute(event::DisableMouseCapture);
+                }
+                if config.preserve_on_exit {
+                    // Move cursor below rendered content so shell prompt appears after
+                    let _ = self.inline_state.move_to_end(&mut stdout);
+                } else {
+                    // Clear the inline rendering area
+                    let _ = self.terminal_renderer.clear_lines(
+                        self.inline_state.origin_row,
+                        self.inline_state.reserved_height,
+                    );
+                    // Move cursor back to origin
+                    let _ = stdout.execute(cursor::MoveTo(
+                        self.inline_state.origin_col,
+                        self.inline_state.origin_row,
+                    ));
+                }
+            }
+        }
 
         // Flush to ensure all commands are sent before disabling raw mode
         let _ = stdout.flush();

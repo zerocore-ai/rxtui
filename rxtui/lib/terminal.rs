@@ -6,6 +6,7 @@
 
 use crate::buffer::{Cell, CellStyle, CellUpdate};
 use crate::style::Color;
+use crate::utils::display_width;
 use crossterm::{
     ExecutableCommand, cursor,
     style::{Attribute, Print, ResetColor, SetAttribute, SetBackgroundColor, SetForegroundColor},
@@ -320,9 +321,11 @@ impl TerminalRenderer {
             }
             TerminalCommand::Print(text) => {
                 self.stdout.execute(Print(&text))?;
-                // Update cursor position
+                // Update cursor position using display width (not byte length!)
+                // This is crucial for Unicode characters like "▶" which are
+                // 3 bytes but only 1 column wide.
                 if let Some((x, y)) = self.current_pos {
-                    self.current_pos = Some((x + text.len() as u16, y));
+                    self.current_pos = Some((x + display_width(&text) as u16, y));
                 }
             }
             TerminalCommand::SetStyle(style) => {
@@ -407,6 +410,49 @@ impl TerminalRenderer {
     #[allow(dead_code)]
     pub fn reset(&mut self) -> io::Result<()> {
         self.apply_command(TerminalCommand::Reset)
+    }
+
+    /// Clears specific lines in the terminal (for inline mode).
+    ///
+    /// Clears `count` lines starting from `start_row`.
+    pub fn clear_lines(&mut self, start_row: u16, count: u16) -> io::Result<()> {
+        for row in start_row..(start_row + count) {
+            self.stdout.execute(cursor::MoveTo(0, row))?;
+            self.stdout
+                .execute(terminal::Clear(terminal::ClearType::CurrentLine))?;
+        }
+        self.current_pos = None;
+        self.stdout.flush()?;
+        Ok(())
+    }
+
+    /// Applies updates for inline mode with origin offset.
+    ///
+    /// Transforms all y-coordinates by adding `origin_row`, allowing
+    /// rendering at an arbitrary vertical position in the terminal.
+    pub fn apply_updates_inline(
+        &mut self,
+        updates: Vec<CellUpdate>,
+        origin_row: u16,
+    ) -> io::Result<()> {
+        if updates.is_empty() {
+            return Ok(());
+        }
+
+        // Transform coordinates to account for origin
+        let transformed: Vec<CellUpdate> = updates
+            .into_iter()
+            .map(|update| match update {
+                CellUpdate::Single { x, y, cell } => CellUpdate::Single {
+                    x,
+                    y: y + origin_row,
+                    cell,
+                },
+            })
+            .collect();
+
+        // Use existing optimized update path
+        self.apply_updates_optimized(transformed)
     }
 }
 

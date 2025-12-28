@@ -5,6 +5,7 @@ RxTUI is a reactive terminal user interface framework for Rust that brings moder
 ## Table of Contents
 
 - [Getting Started](#getting-started)
+- [Terminal Modes](#terminal-modes)
 - [Components](#components)
 - [The node! Macro](#the-node-macro)
 - [State Management](#state-management)
@@ -57,6 +58,87 @@ impl HelloWorld {
 fn main() -> std::io::Result<()> {
     App::new()?.run(HelloWorld)
 }
+```
+
+<div align='center'>• • •</div>
+
+## Terminal Modes
+
+RxTUI supports two terminal rendering modes: **Alternate Screen** (default) and **Inline**.
+
+#### Alternate Screen Mode (Default)
+
+The default mode uses the terminal's alternate screen buffer. This is ideal for full-screen applications:
+
+```rust
+fn main() -> std::io::Result<()> {
+    App::new()?.run(MyComponent)  // Uses alternate screen
+}
+```
+
+Characteristics:
+- Takes over the full terminal screen
+- Content disappears when the app exits
+- Best for interactive applications, editors, dashboards
+
+#### Inline Mode
+
+Inline mode renders directly in the terminal buffer without switching screens. Content persists after the app exits, making it ideal for CLI tools:
+
+```rust
+fn main() -> std::io::Result<()> {
+    // Simple inline mode with defaults
+    App::inline()?.run(MyComponent)?;
+
+    // This prints after the UI since content is preserved
+    println!("Done! The UI above is preserved.");
+    Ok(())
+}
+```
+
+Characteristics:
+- Renders in the main terminal buffer
+- Content persists in terminal history after exit
+- Height is content-based by default (grows to fit)
+- Mouse capture disabled by default (allows terminal scrolling)
+
+#### Custom Inline Configuration
+
+For fine-grained control over inline rendering:
+
+```rust
+use rxtui::{App, InlineConfig, InlineHeight};
+
+fn main() -> std::io::Result<()> {
+    let config = InlineConfig {
+        // Fixed height of 10 lines
+        height: InlineHeight::Fixed(10),
+        // Show cursor during rendering
+        cursor_visible: true,
+        // Preserve output after exit
+        preserve_on_exit: true,
+        // Don't capture mouse (allow terminal scrolling)
+        mouse_capture: false,
+    };
+
+    App::inline_with_config(config)?.run(MyComponent)
+}
+```
+
+#### Height Modes
+
+Control how inline mode determines rendering height:
+
+```rust
+// Fixed number of lines
+InlineHeight::Fixed(10)
+
+// Grow to fit content, with optional maximum
+InlineHeight::Content { max: Some(24) }  // Max 24 lines
+InlineHeight::Content { max: None }       // No limit (default)
+
+// Fill remaining terminal space below cursor
+InlineHeight::Fill { min: 5 }  // At least 5 lines
 ```
 
 <div align='center'>• • •</div>

@@ -118,6 +118,15 @@ impl VDom {
         self.render_tree.layout(width, height);
     }
 
+    /// Performs layout calculation with additional options for inline mode.
+    ///
+    /// When `unclamped_height` is true, height is not clamped to viewport.
+    /// This is used for inline mode where content can grow beyond viewport bounds.
+    pub fn layout_with_options(&mut self, width: u16, height: u16, unclamped_height: bool) {
+        self.render_tree
+            .layout_with_options(width, height, unclamped_height);
+    }
+
     /// Gets a reference to the current render tree.
     ///
     /// Used by the App to access the tree for drawing and event handling.
